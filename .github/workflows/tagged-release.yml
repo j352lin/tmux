@@ -31,8 +31,10 @@ jobs:
       # - run: "yarn build"
       # - run: "yarn jest --env=node --colors --forceExit"
 
-      - run: "sh autogen.sh"
-      - run: "./configure"
+      # - run: "sh autogen.sh"
+      # - run: "./configure"
+      - run: "sh .github/travis/before-install.sh"
+      - run: "sh .github/travis/build.sh"
       - run: "make dist"
 
       - uses: "marvinpinto/action-automatic-releases@latest"

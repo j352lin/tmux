@@ -33,6 +33,14 @@ jobs:
 
       # - run: "sh autogen.sh"
       # - run: "./configure"
+      - run: "sudo apt-get update -qq"
+      - run: "sudo apt-get -y install bison \
+          autotools-dev \
+          libncurses5-dev \
+          libevent-dev \
+          pkg-config \
+          libutempter-dev \
+          build-essential"
       - run: "sh .github/travis/before-install.sh"
       - run: "sh .github/travis/build.sh"
       - run: "make dist"

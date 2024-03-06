@@ -31,6 +31,8 @@ jobs:
       # - run: "yarn build"
       # - run: "yarn jest --env=node --colors --forceExit"
 
+      - run: "sh autogen.sh"
+      - run: "./configure"
       - run: "make dist"
 
       - uses: "marvinpinto/action-automatic-releases@latest"

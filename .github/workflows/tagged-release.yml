@@ -4,7 +4,7 @@ name: "tagged-release"
 on:
   push:
     tags:
-      - "v*"
+      - "*"
 
 jobs:
   gh_tagged_release:
@@ -45,26 +45,10 @@ jobs:
       - run: "sh .github/travis/build.sh"
       - run: "make dist"
 
-      # - run: "LAST_TAG=$(git describe --tags `git rev-list --tags --max-count=1`)"
-      # - run: "primary_num=$(echo $LAST_TAG | sed 's/\..*//')"
-      # - run: "subnum=${LAST_TAG#*\.}"
-      # - run: "newsubnum=$(( $(echo $subnum | sed 's/[^0-9]*//g') + 1 ))"
-      # - run: "new_tag=$(echo $primary_num.$newsubnum)"
-
-      # - run: "git log --pretty=format:'%s' $LAST_TAG..HEAD > /tmp/tmux-tagged-release"
-      # - run: "sed 's/^/* /' /tmp/tmux-tagged-release"
-      # - run: "echo CHANGES FROM $LAST_TAG to $new_tag | cat - /tmp/tmux-tagged-release > /tmp/tmux-tagged-release"
-      # # add newlines
-      # - run: "sed G /tmp/tmux-tagged-release"
-      # - run: "cat /tmp/tmux-tagged-release | cat - CHANGES > CHANGES"
-      # - run: "rm /tmp/tmux-tagged-release"
-      # - run: "git commit -m 'change CHANGES for new release'"
-      # - run: "git push"
-
       - uses: "marvinpinto/action-automatic-releases@latest"
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          automatic_release_tag: "${{ new_tag }}"
+          automatic_release_tag: "latest"
           prerelease: false
           files: |
             *.tar.gz

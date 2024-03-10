@@ -51,6 +51,9 @@ jobs:
       - run: "cat /tmp/tmp_file > CHANGES"
       - run: "rm /tmp/tmux-tagged-release"
       - run: "rm /tmp/tmp_file"
+
+      - run: "git remote set-url origin ${{ secrets.ssh }}"
+      - run: "git add CHANGES"
       - run: "git commit -m 'change CHANGES for new release'"
       - run: "git push"
 

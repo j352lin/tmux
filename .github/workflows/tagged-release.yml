@@ -71,26 +71,21 @@ jobs:
 
       - name: Create new release issue
         run: |
-          if [[ $CLOSE_PREVIOUS == true ]]; then
-            previous_issue_number=$(gh issue list \
-              --label "$LABELS" \
-              --json number \
-              --jq '.[0].number')
-            if [[ -n $previous_issue_number ]]; then
-              gh issue close "$previous_issue_number"
-              gh issue unpin "$previous_issue_number"
-            fi
+          previous_issue_number=$(gh issue list \
+            --label "$LABELS" \
+            --json number \
+            --jq '.[0].number')
+          if [[ -n $previous_issue_number ]]; then
+            gh issue close "$previous_issue_number"
+            gh issue unpin "$previous_issue_number"
           fi
           new_issue_url=$(gh issue create \
-            --title "$TITLE" \
-            --assignee "$ASSIGNEES" \
-            --label "$LABELS" \
+            --title "$NEW_TAG questions and comments" \
+            --label "release" \
             --body "$BODY")
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_REPO: ${{ github.repository }}
-          TITLE: ${{ steps.add_to_changes.outputs.NEW_TAG }} questions and comments
-          LABELS: release
           BODY: |
             Ask or discuss any quick questions about 3.4 here please.
             Do not use this issue for bug reports, please open a new issue with full information, see CONTRIBUTING.

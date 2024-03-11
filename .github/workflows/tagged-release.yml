@@ -95,5 +95,5 @@ jobs:
         uses: irongut/EditRelease@v1.2.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          id: ${{ github.event.release.id }}
+          id: "automatic_releases"
           body: "Hello"

@@ -16,6 +16,7 @@ jobs:
           fetch-depth: 0
 
       - name: Add to CHANGES
+        id: add_to_changes
         run: |
           git checkout master
           git config user.name github-actions
@@ -88,7 +89,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_REPO: ${{ github.repository }}
-          TITLE: ${{ NEW_TAG }} questions and comments
+          TITLE: ${{ steps.add_to_changes.outputs.NEW_TAG }} questions and comments
           LABELS: release
           BODY: |
             Ask or discuss any quick questions about 3.4 here please.

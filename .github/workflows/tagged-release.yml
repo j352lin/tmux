@@ -95,5 +95,8 @@ jobs:
         uses: irongut/EditRelease@v1.2.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          id: "automatic_releases"
-          body: "Hello"
+          id: ${{ github.event.release.id }}
+          name: "Beta"
+          prerelease: true
+          body: "This is a pre-release version for testing purposes."
+          files: ""

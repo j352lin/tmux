@@ -24,6 +24,9 @@ jobs:
           echo "Current version: $VERSION"
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
+          git add configure.ac
+          git commit -m "Change version to $NEW_VERSION in configure.ac"
+          git push origin HEAD
           git tag -a "v$VERSION" -m "Release v$VERSION"
           git push origin "v$VERSION"
           echo "VERSION=$VERSION" >> $GITHUB_ENV

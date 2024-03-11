@@ -69,7 +69,7 @@ jobs:
 
       - name: "Update Release Notes"
         run: |
-          gh release edit v4.1.2 --notes-file COPYING
+          gh release edit $NEW_TAG --notes-file RELEASE_NOTES.md
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       # - run: "echo Name: ${{ github.event.release.id }}"

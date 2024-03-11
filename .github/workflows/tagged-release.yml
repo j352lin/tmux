@@ -91,12 +91,13 @@ jobs:
             *.tar.gz
         id: "automatic_releases"
 
-      - run: "echo Name: ${{ github.event.release.id }}"
+      # - run: "echo Name: ${{ github.event.release.id }}"
 
-      - name: Add Test Report to Release
-        uses: irongut/EditRelease@v1.2.0
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          id: ${{ github.event.release.id }}
-          body: "Released to GitHub Packages."
-          files: "*.tar.gz"
+      # need to move this to release.yml
+      # - name: Add Test Report to Release
+      #   uses: irongut/EditRelease@v1.2.0
+      #   with:
+      #     token: ${{ secrets.GITHUB_TOKEN }}
+      #     id: ${{ github.event.release.id }}
+      #     body: "Released to GitHub Packages."
+      #     files: "*.tar.gz"

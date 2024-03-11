@@ -42,8 +42,8 @@ jobs:
 
       - name: Create tag
         run: |
-          git tag -a "v0.1.1" -m "Release v$NEW_VERSION"
-          git push origin "v0.1.1"
+          git tag -a "v0.1.2" -m "Release v$NEW_VERSION"
+          git push origin "v0.1.2"
           git push
 
   # release:

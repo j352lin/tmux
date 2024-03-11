@@ -42,44 +42,6 @@ jobs:
 
       - name: Create tag
         run: |
-          git tag -a "v0.1.10" -m "Release v$NEW_VERSION"
-          git push origin "v0.1.10"
+          git tag -a "v0.1.11" -m "Release v$NEW_VERSION"
+          git push origin "v0.1.11"
           git push
-
-  # release:
-  #   needs: update-tag
-  #   runs-on: "ubuntu-latest"
-
-  #   steps:
-  #     - name: "Checkout source code"
-  #       uses: "actions/checkout@v2.3.4"
-  #       with:
-  #         lfs: true
-  #         fetch-depth: 0
-
-  #     - id: "yarn-cache"
-  #       run: echo "::set-output name=dir::$(yarn cache dir)"
-  #     - uses: "actions/cache@v2.1.6"
-  #       with:
-  #         path: ${{ steps.yarn-cache.outputs.dir }}
-  #         key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-
-  #     - run: "sudo apt-get update -qq"
-  #     - run: "sudo apt-get -y install bison \
-  #         autotools-dev \
-  #         libncurses5-dev \
-  #         libevent-dev \
-  #         pkg-config \
-  #         libutempter-dev \
-  #         build-essential"
-  #     - run: "sh .github/travis/before-install.sh"
-  #     - run: "sh .github/travis/build.sh"
-  #     - run: "make dist"
-
-  #     - uses: "marvinpinto/action-automatic-releases@latest"
-  #       with:
-  #         repo_token: "${{ secrets.GITHUB_TOKEN }}"
-  #         prerelease: false
-  #         files: |
-  #           *.tar.gz
-  #       id: "automatic_releases"

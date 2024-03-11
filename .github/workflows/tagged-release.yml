@@ -37,6 +37,7 @@ jobs:
       - run: "sh .github/travis/before-install.sh"
       - run: "sh .github/travis/build.sh"
       - run: "make dist"
+
       - run: "LAST_TAG=$(git describe --tags `git rev-list --tags --max-count=1`)"
       - run: "primary_num=$(echo $LAST_TAG | sed 's/..*//')"
       - run: "subnum=${LAST_TAG#*.}"
@@ -52,7 +53,9 @@ jobs:
       - run: "rm /tmp/tmux-tagged-release"
       - run: "rm /tmp/tmp_file"
 
-      - run: "git remote set-url origin ${{ secrets.ssh }}"
+      - run: |
+        git config user.name "GitHub Actions"
+        git config user.email "actions@github.com"
       - run: "git add CHANGES"
       - run: "git commit -m 'change CHANGES for new release'"
       - run: "git push"
@@ -65,17 +68,3 @@ jobs:
           files: |
             *.tar.gz
         id: "automatic_releases"
-
-      # marvinpinto/action-keybase-notifications
-      # marvinpinto/action-automatic-releases
-      # - name: "Automatically mirror release artifacts"
-      #   env:
-      #     GITHUB_SUPER_TOKEN: ${{ secrets.GITHUB_SUPER_TOKEN }}
-      #   run: |
-      #     ./scripts/mirror-actions.sh "$AUTOMATIC_RELEASES_TAG"
-
-      # - uses: "marvinpinto/action-keybase-notifications@latest"
-      #   if: always()
-      #   with:
-      #     job_status: ${{ job.status }}
-      #     opensentinel_token: ${{ secrets.OSL_TOKEN }}

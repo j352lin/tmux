@@ -3,7 +3,6 @@ name: Fast Auto Tag and Release (Testing)
 on:
   schedule:
     - cron: "* * * * *"
-  workflow_dispatch:
 
 jobs:
   update-tag:
@@ -98,7 +97,6 @@ jobs:
       - uses: "marvinpinto/action-automatic-releases@latest"
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          automatic_release_tag: "$NEW_TAG"
           prerelease: false
           files: |
             *.tar.gz

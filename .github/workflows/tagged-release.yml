@@ -55,7 +55,7 @@ jobs:
 
       - run: "git add CHANGES"
       - run: "git commit -m 'change CHANGES for new release'"
-      - run: "git push"
+      - run: "git push origin master"
 
       - name: "Checkout source code"
         uses: "actions/checkout@v2.3.4"

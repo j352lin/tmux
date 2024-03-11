@@ -68,18 +68,39 @@ jobs:
             *.tar.gz
         id: "automatic_releases"
 
+      - name: Create new release issue
+        run: |
+          if [[ $CLOSE_PREVIOUS == true ]]; then
+            previous_issue_number=$(gh issue list \
+              --label "$LABELS" \
+              --json number \
+              --jq '.[0].number')
+            if [[ -n $previous_issue_number ]]; then
+              gh issue close "$previous_issue_number"
+              gh issue unpin "$previous_issue_number"
+            fi
+          fi
+          new_issue_url=$(gh issue create \
+            --title "$TITLE" \
+            --assignee "$ASSIGNEES" \
+            --label "$LABELS" \
+            --body "$BODY")
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          TITLE: $NEW_TAG questions and comments
+          LABELS: release
+          BODY: |
+            Ask or discuss any quick questions about 3.4 here please.
+            Do not use this issue for bug reports, please open a new issue with full information, see CONTRIBUTING.
+
+            The 3.4 CHANGES file is here.
+
+            As always, thanks to the many people who contributed to both this and to previous releases.
+          CLOSE_PREVIOUS: true
+
       - name: "Update Release Notes"
         run: |
           gh release edit $NEW_TAG --notes-file RELEASE_NOTES.md
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      # - run: "echo Name: ${{ github.event.release.id }}"
-
-      # need to move this to release.yml
-      # - name: Add Test Report to Release
-      #   uses: irongut/EditRelease@v1.2.0
-      #   with:
-      #     token: ${{ secrets.GITHUB_TOKEN }}
-      #     id: ${{ github.event.release.id }}
-      #     body: "Released to GitHub Packages."
-      #     files: "*.tar.gz"

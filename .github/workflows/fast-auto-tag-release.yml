@@ -1,8 +1,8 @@
 name: Fast Auto Tag and Release (Testing)
 
 on:
-  schedule:
-    - cron: "* * * * *"
+  # schedule:
+  #   - cron: "* * * * *"
   workflow_dispatch:
 
 jobs:

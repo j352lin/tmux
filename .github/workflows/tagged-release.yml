@@ -15,7 +15,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
         with:
-          ssh-key: "${{ secrets.COMMIT_KEY }}"
           fetch-depth: 0
 
       # - id: "yarn-cache"
@@ -87,6 +86,7 @@ jobs:
       - uses: "marvinpinto/action-automatic-releases@latest"
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          ssh-key: "${{ secrets.COMMIT_KEY }}"
           prerelease: false
           files: |
             *.tar.gz

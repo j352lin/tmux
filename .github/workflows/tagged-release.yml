@@ -38,21 +38,22 @@ jobs:
       - run: "sh .github/travis/build.sh"
       - run: "make dist"
 
+      - run: "git config user.name 'GitHub Actions'"
+      - run: "git config user.email 'actions@github.com'"
+
       - run: "NEW_TAG=$(git describe --tags `git rev-list --tags --max-count=1`)"
       - run: "PREV_TAG=$(git describe --abbrev=0 --tags $(git rev-list --tags --skip=1 --max-count=1))"
 
       - run: "git log --pretty=format:'%s' $PREV_TAG..HEAD > /tmp/tmux-tagged-release"
-      - run: "sed 's/^/* /' /tmp/tmux-tagged-release > /tmp/tmux-tagged-release"
-      - run: "echo CHANGES FROM $PREV_TAG to $NEW_tag | cat - /tmp/tmux-tagged-release > /tmp/tmp_file"
-      - run: "cat /tmp/tmp_file > /tmp/tmux-tagged-release"
+      - run: "sed 's/^/* /' /tmp/tmux-tagged-release > /tmp/tmp_file"
+      - run: "echo CHANGES FROM $PREV_TAG to $NEW_TAG | cat - /tmp/tmp_file > /tmp/tmux-tagged-release"
+      # - run: "cat /tmp/tmp_file > /tmp/tmux-tagged-release"
       - run: "sed G /tmp/tmux-tagged-release > /tmp/tmux-tagged-release"
       - run: "cat /tmp/tmux-tagged-release | cat - CHANGES > /tmp/tmp_file"
       - run: "cat /tmp/tmp_file > CHANGES"
       - run: "rm /tmp/tmux-tagged-release"
       - run: "rm /tmp/tmp_file"
 
-      - run: "git config user.name 'GitHub Actions'"
-      - run: "git config user.email 'actions@github.com'"
       - run: "git add CHANGES"
       - run: "git commit -m 'change CHANGES for new release'"
       - run: "git push"

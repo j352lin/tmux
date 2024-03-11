@@ -1,9 +1,9 @@
 name: Fast Auto Tag and Release (Testing)
 
 on:
-  workflow_dispatch:
   schedule:
     - cron: "* * * * *"
+  workflow_dispatch:
 
 jobs:
   update-tag:
@@ -43,6 +43,22 @@ jobs:
         run: |
           git tag -a "v$NEW_VERSION" -m "Release v$NEW_VERSION"
           git push origin "v$NEW_VERSION"
+          git push
+
+      - name: Add to CHANGES
+        run: |
+          NEW_TAG=$(git describe --tags `git rev-list --tags --max-count=1`)
+          PREV_TAG=$(git describe --abbrev=0 --tags $(git rev-list --tags --skip=1 --max-count=1))
+          git log --pretty=format:'%s' $PREV_TAG..HEAD > /tmp/tmux-tagged-release
+          sed 's/^/* /' /tmp/tmux-tagged-release > /tmp/tmp_file
+          echo CHANGES FROM $PREV_TAG to $NEW_TAG | cat - /tmp/tmp_file > /tmp/tmux-tagged-release
+          sed G /tmp/tmux-tagged-release > /tmp/tmp_file
+          cat /tmp/tmp_file | cat - CHANGES > /tmp/tmux-tagged-release
+          cat /tmp/tmux-tagged-release > CHANGES
+          rm /tmp/tmux-tagged-release
+          rm /tmp/tmp_file
+          git add CHANGES
+          git commit -m "change CHANGES for new release"
           git push
 
         # env:

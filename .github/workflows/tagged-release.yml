@@ -93,7 +93,7 @@ jobs:
 
       - name: "Update Release Notes"
         run: |
-          gh release edit $NEW_TAG --notes-file .github/FUNDING.yml
+          gh release edit v0.1.12 --notes-file CHANGES
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       # - run: "echo Name: ${{ github.event.release.id }}"

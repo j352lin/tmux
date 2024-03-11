@@ -8,14 +8,60 @@ on:
 
 jobs:
   gh_tagged_release:
-    runs-on: "ubuntu-latest"
-    env:
-      JEST_VERBOSE: ${{ secrets.JEST_VERBOSE }}
+    runs-on: ubuntu-latest
+    # env:
+    #   JEST_VERBOSE: ${{ secrets.JEST_VERBOSE }}
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
         with:
+          fetch-depth: 0
+
+      # - id: "yarn-cache"
+      #   run: echo "::set-output name=dir::$(yarn cache dir)"
+      # - uses: "actions/cache@v2.1.6"
+      #   with:
+      #     path: ${{ steps.yarn-cache.outputs.dir }}
+      #     key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+
+      # - run: "sudo apt-get update -qq"
+      # - run: "sudo apt-get -y install bison \
+      #     autotools-dev \
+      #     libncurses5-dev \
+      #     libevent-dev \
+      #     pkg-config \
+      #     libutempter-dev \
+      #     build-essential"
+      # - run: "sh .github/travis/before-install.sh"
+      # - run: "sh .github/travis/build.sh"
+      # - run: "make dist"
+
+      # - run: "git config user.name 'GitHub Actions'"
+      # - run: "git config user.email 'actions@github.com'"
+
+      - name: Add to CHANGES
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          NEW_TAG=$(git describe --tags `git rev-list --tags --max-count=1`)
+          PREV_TAG=$(git describe --abbrev=0 --tags $(git rev-list --tags --skip=1 --max-count=1))
+          git log --pretty=format:'%s' $PREV_TAG..HEAD > /tmp/tmux-tagged-release
+          sed 's/^/* /' /tmp/tmux-tagged-release > /tmp/tmp_file
+          echo CHANGES FROM $PREV_TAG to $NEW_TAG | cat - /tmp/tmp_file > /tmp/tmux-tagged-release
+          sed G /tmp/tmux-tagged-release > /tmp/tmp_file
+          cat /tmp/tmp_file | cat - CHANGES > /tmp/tmux-tagged-release
+          cat /tmp/tmux-tagged-release > CHANGES
+          rm /tmp/tmux-tagged-release
+          rm /tmp/tmp_file
+          git add CHANGES
+          git commit -m "change CHANGES for new release"
+          git push
+
+      - name: "Checkout source code"
+        uses: "actions/checkout@v2.3.4"
+        with:
+          lfs: true
           fetch-depth: 0
 
       - id: "yarn-cache"
@@ -36,32 +82,6 @@ jobs:
       - run: "sh .github/travis/before-install.sh"
       - run: "sh .github/travis/build.sh"
       - run: "make dist"
-
-      - run: "git config user.name 'GitHub Actions'"
-      - run: "git config user.email 'actions@github.com'"
-
-      - run: "NEW_TAG=$(git describe --tags `git rev-list --tags --max-count=1`)"
-      - run: "PREV_TAG=$(git describe --abbrev=0 --tags $(git rev-list --tags --skip=1 --max-count=1))"
-
-      - run: "git log --pretty=format:'%s' $PREV_TAG..HEAD > /tmp/tmux-tagged-release"
-      - run: "sed 's/^/* /' /tmp/tmux-tagged-release > /tmp/tmp_file"
-      - run: "echo CHANGES FROM $PREV_TAG to $NEW_TAG | cat - /tmp/tmp_file > /tmp/tmux-tagged-release"
-      # - run: "cat /tmp/tmp_file > /tmp/tmux-tagged-release"
-      - run: "sed G /tmp/tmux-tagged-release > /tmp/tmp_file"
-      - run: "cat /tmp/tmp_file | cat - CHANGES > /tmp/tmux-tagged-release"
-      - run: "cat /tmp/tmux-tagged-release > CHANGES"
-      - run: "rm /tmp/tmux-tagged-release"
-      - run: "rm /tmp/tmp_file"
-
-      - run: "git add CHANGES"
-      - run: "git commit -m 'change CHANGES for new release'"
-      - run: "git push origin main"
-
-      - name: "Checkout source code"
-        uses: "actions/checkout@v2.3.4"
-        with:
-          lfs: true
-          fetch-depth: 0
 
       - uses: "marvinpinto/action-automatic-releases@latest"
         with:

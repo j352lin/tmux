@@ -45,61 +45,40 @@ jobs:
           git push origin "v$NEW_VERSION"
           git push
 
-      - name: Add to CHANGES
-        run: |
-          NEW_TAG=$(git describe --tags `git rev-list --tags --max-count=1`)
-          PREV_TAG=$(git describe --abbrev=0 --tags $(git rev-list --tags --skip=1 --max-count=1))
-          git log --pretty=format:'%s' $PREV_TAG..HEAD > /tmp/tmux-tagged-release
-          sed 's/^/* /' /tmp/tmux-tagged-release > /tmp/tmp_file
-          echo CHANGES FROM $PREV_TAG to $NEW_TAG | cat - /tmp/tmp_file > /tmp/tmux-tagged-release
-          sed G /tmp/tmux-tagged-release > /tmp/tmp_file
-          cat /tmp/tmp_file | cat - CHANGES > /tmp/tmux-tagged-release
-          cat /tmp/tmux-tagged-release > CHANGES
-          rm /tmp/tmux-tagged-release
-          rm /tmp/tmp_file
-          git add CHANGES
-          git commit -m "change CHANGES for new release"
-          git push
+  # release:
+  #   needs: update-tag
+  #   runs-on: "ubuntu-latest"
 
-        # env:
-        #   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  release:
-    needs: update-tag
-    runs-on: "ubuntu-latest"
-    # env:
-    #   JEST_VERBOSE: ${{ secrets.JEST_VERBOSE }}
+  #   steps:
+  #     - name: "Checkout source code"
+  #       uses: "actions/checkout@v2.3.4"
+  #       with:
+  #         lfs: true
+  #         fetch-depth: 0
 
-    steps:
-      - name: "Checkout source code"
-        uses: "actions/checkout@v2.3.4"
-        with:
-          lfs: true
-          fetch-depth: 0
+  #     - id: "yarn-cache"
+  #       run: echo "::set-output name=dir::$(yarn cache dir)"
+  #     - uses: "actions/cache@v2.1.6"
+  #       with:
+  #         path: ${{ steps.yarn-cache.outputs.dir }}
+  #         key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
 
-      - id: "yarn-cache"
-        run: echo "::set-output name=dir::$(yarn cache dir)"
-      - uses: "actions/cache@v2.1.6"
-        with:
-          path: ${{ steps.yarn-cache.outputs.dir }}
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+  #     - run: "sudo apt-get update -qq"
+  #     - run: "sudo apt-get -y install bison \
+  #         autotools-dev \
+  #         libncurses5-dev \
+  #         libevent-dev \
+  #         pkg-config \
+  #         libutempter-dev \
+  #         build-essential"
+  #     - run: "sh .github/travis/before-install.sh"
+  #     - run: "sh .github/travis/build.sh"
+  #     - run: "make dist"
 
-      - run: "sudo apt-get update -qq"
-      - run: "sudo apt-get -y install bison \
-          autotools-dev \
-          libncurses5-dev \
-          libevent-dev \
-          pkg-config \
-          libutempter-dev \
-          build-essential"
-      - run: "sh .github/travis/before-install.sh"
-      - run: "sh .github/travis/build.sh"
-      - run: "make dist"
-
-      - uses: "marvinpinto/action-automatic-releases@latest"
-        with:
-          repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          automatic_release_tag: $NEW_TAG
-          prerelease: false
-          files: |
-            *.tar.gz
-        id: "automatic_releases"
+  #     - uses: "marvinpinto/action-automatic-releases@latest"
+  #       with:
+  #         repo_token: "${{ secrets.GITHUB_TOKEN }}"
+  #         prerelease: false
+  #         files: |
+  #           *.tar.gz
+  #       id: "automatic_releases"

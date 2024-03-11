@@ -53,9 +53,8 @@ jobs:
       - run: "rm /tmp/tmux-tagged-release"
       - run: "rm /tmp/tmp_file"
 
-      - run: |
-        git config user.name "GitHub Actions"
-        git config user.email "actions@github.com"
+      - run: "git config user.name 'GitHub Actions'"
+      - run: "git config user.email 'actions@github.com'"
       - run: "git add CHANGES"
       - run: "git commit -m 'change CHANGES for new release'"
       - run: "git push"

@@ -1,0 +1,89 @@
+name: Fast Auto Tag and Release (Testing)
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "* * * * *"
+
+jobs:
+  update-tag:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Increment version and update file
+        run: |
+          # Extract the current version from configure.ac
+          VERSION=$(grep 'AC_INIT(\[tmux\],' configure.ac | sed -n 's/.*AC_INIT(\[tmux\], \([next-]*[0-9]*\.[0-9]*\)).*/\1/p')
+          echo "Current version: $VERSION"
+
+          # Increment the minor version
+          IFS='.' read -ra VER <<< "$VERSION"
+          NEW_MINOR=$((VER[1]+1))
+          NEW_VERSION="${VER[0]}.$NEW_MINOR"
+
+          # Write back to file
+          sed -i "s/AC_INIT(\[tmux\], $VERSION)/AC_INIT([tmux], $NEW_VERSION)/" configure.ac
+
+          # Set environment variable to use in subsequent steps
+          echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
+
+      - name: Commit changes
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git add configure.ac
+          git commit -m "Increment version to $NEW_VERSION"
+
+      - name: Create tag
+        run: |
+          git tag -a "v$NEW_VERSION" -m "Release v$NEW_VERSION"
+          git push origin "v$NEW_VERSION"
+          git push
+
+        # env:
+        #   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  release:
+    needs: update-tag
+    runs-on: "ubuntu-latest"
+    # env:
+    #   JEST_VERBOSE: ${{ secrets.JEST_VERBOSE }}
+
+    steps:
+      - name: "Checkout source code"
+        uses: "actions/checkout@v2.3.4"
+        with:
+          lfs: true
+          fetch-depth: 0
+
+      - id: "yarn-cache"
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+      - uses: "actions/cache@v2.1.6"
+        with:
+          path: ${{ steps.yarn-cache.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+
+      - run: "sudo apt-get update -qq"
+      - run: "sudo apt-get -y install bison \
+          autotools-dev \
+          libncurses5-dev \
+          libevent-dev \
+          pkg-config \
+          libutempter-dev \
+          build-essential"
+      - run: "sh .github/travis/before-install.sh"
+      - run: "sh .github/travis/build.sh"
+      - run: "make dist"
+
+      - uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          automatic_release_tag: "latest"
+          prerelease: false
+          files: |
+            *.tar.gz
+        id: "automatic_releases"

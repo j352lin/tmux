@@ -13,7 +13,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
@@ -41,6 +41,8 @@ jobs:
 
       - name: Add to CHANGES
         run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
           NEW_TAG=$(git describe --tags `git rev-list --tags --max-count=1`)
           PREV_TAG=$(git describe --abbrev=0 --tags $(git rev-list --tags --skip=1 --max-count=1))
           git log --pretty=format:'%s' $PREV_TAG..HEAD > /tmp/tmux-tagged-release

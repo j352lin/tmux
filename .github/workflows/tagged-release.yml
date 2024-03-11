@@ -88,7 +88,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_REPO: ${{ github.repository }}
-          TITLE: $NEW_TAG questions and comments
+          TITLE: ${{ NEW_TAG }} questions and comments
           LABELS: release
           BODY: |
             Ask or discuss any quick questions about 3.4 here please.

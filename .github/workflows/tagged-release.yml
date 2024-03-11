@@ -48,9 +48,9 @@ jobs:
       - run: "sed 's/^/* /' /tmp/tmux-tagged-release > /tmp/tmp_file"
       - run: "echo CHANGES FROM $PREV_TAG to $NEW_TAG | cat - /tmp/tmp_file > /tmp/tmux-tagged-release"
       # - run: "cat /tmp/tmp_file > /tmp/tmux-tagged-release"
-      - run: "sed G /tmp/tmux-tagged-release > /tmp/tmux-tagged-release"
-      - run: "cat /tmp/tmux-tagged-release | cat - CHANGES > /tmp/tmp_file"
-      - run: "cat /tmp/tmp_file > CHANGES"
+      - run: "sed G /tmp/tmux-tagged-release > /tmp/tmp_file"
+      - run: "cat /tmp/tmp_file | cat - CHANGES > /tmp/tmux-tagged-release"
+      - run: "cat /tmp/tmux-tagged-release > CHANGES"
       - run: "rm /tmp/tmux-tagged-release"
       - run: "rm /tmp/tmp_file"
 

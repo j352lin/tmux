@@ -41,6 +41,7 @@ jobs:
 
       - name: Add to CHANGES
         run: |
+          git checkout master
           git config user.name github-actions
           git config user.email github-actions@github.com
           NEW_TAG=$(git describe --tags `git rev-list --tags --max-count=1`)

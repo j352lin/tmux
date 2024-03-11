@@ -3,6 +3,7 @@ name: Fast Auto Tag and Release (Testing)
 on:
   schedule:
     - cron: "* * * * *"
+  workflow_dispatch:
 
 jobs:
   update-tag:

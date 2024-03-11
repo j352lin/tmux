@@ -89,14 +89,14 @@ jobs:
           GH_REPO: ${{ github.repository }}
           BODY: |
             Ask or discuss any quick questions about ${{ env.NEW_TAG }} here please.
-            Do not use this issue for bug reports, please open a new issue with full information, see [CONTRIBUTING](.github/CONTRIBUTING.md).
+            Do not use this issue for bug reports, please open a new issue with full information, see [CONTRIBUTING](../.github/CONTRIBUTING.md).
 
-            [The ${{ env.NEW_TAG }} CHANGES file is here](CHANGES).
+            [The ${{ env.NEW_TAG }} CHANGES file is here](../CHANGES).
 
             As always, thanks to the many people who contributed to both this and to previous releases.
 
       - name: "Update Release Notes"
         run: |
-          gh release edit $NEW_TAG -n "For a list of changes [please read the CHANGES file](CHANGES); for release notes [please see this issue]($ISSUE_URL)"
+          gh release edit $NEW_TAG -n "For a list of changes [please read the CHANGES file](../CHANGES); for release notes [please see this issue]($ISSUE_URL)"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

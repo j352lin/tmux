@@ -90,3 +90,10 @@ jobs:
           files: |
             *.tar.gz
         id: "automatic_releases"
+
+      - name: Edit Release
+        uses: irongut/EditRelease@v1.2.0
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          id: ${{ github.event.release.id }}
+          body: "Hello"

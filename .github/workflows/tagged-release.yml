@@ -38,15 +38,12 @@ jobs:
       - run: "sh .github/travis/build.sh"
       - run: "make dist"
 
-      - run: "LAST_TAG=$(git describe --tags `git rev-list --tags --max-count=1`)"
-      - run: "primary_num=$(echo $LAST_TAG | sed 's/..*//')"
-      - run: "subnum=${LAST_TAG#*.}"
-      - run: "newsubnum=$(( $(echo $subnum | sed 's/[^0-9]*//g') + 1 ))"
-      - run: "new_tag=$(echo $primary_num.$newsubnum)"
+      - run: "NEW_TAG=$(git describe --tags `git rev-list --tags --max-count=1`)"
+      - run: "PREV_TAG=$(git describe --abbrev=0 --tags $(git rev-list --tags --skip=1 --max-count=1))"
 
-      - run: "git log --pretty=format:'%s' $LAST_TAG..HEAD > /tmp/tmux-tagged-release"
+      - run: "git log --pretty=format:'%s' $PREV_TAG..HEAD > /tmp/tmux-tagged-release"
       - run: "sed 's/^/* /' /tmp/tmux-tagged-release > /tmp/tmux-tagged-release"
-      - run: "echo CHANGES FROM $LAST_TAG to $new_tag | cat - /tmp/tmux-tagged-release > /tmp/tmp_file"
+      - run: "echo CHANGES FROM $PREV_TAG to $NEW_tag | cat - /tmp/tmux-tagged-release > /tmp/tmp_file"
       - run: "cat /tmp/tmp_file > /tmp/tmux-tagged-release"
       - run: "sed G /tmp/tmux-tagged-release > /tmp/tmux-tagged-release"
       - run: "cat /tmp/tmux-tagged-release | cat - CHANGES > /tmp/tmp_file"
@@ -63,7 +60,7 @@ jobs:
       - uses: "marvinpinto/action-automatic-releases@latest"
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          automatic_release_tag: "$new_tag"
+          automatic_release_tag: "$NEW_TAG"
           prerelease: false
           files: |
             *.tar.gz

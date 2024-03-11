@@ -91,11 +91,11 @@ jobs:
             *.tar.gz
         id: "automatic_releases"
 
-      - name: "Update Release Notes"
-        run: |
-          gh release edit v0.1.12 --notes-file CHANGES
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # - name: "Update Release Notes"
+      #   run: |
+      #     gh release edit v0.1.12 --notes-file COPYING
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       # - run: "echo Name: ${{ github.event.release.id }}"
 
       # need to move this to release.yml

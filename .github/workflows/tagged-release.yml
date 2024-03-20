@@ -116,7 +116,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           RELEASE_NOTE: |
-            For a list of changes [please read the CHANGES file](${{ env.BASE_URL }}/blob/master/CHANGES); for release notes [please see this issue]($ISSUE_URL)
+            For a list of changes [please read the CHANGES file](${{ env.BASE_URL }}/blob/master/CHANGES); for release notes [please see this issue](${{ env.ISSUE_URL }})
 
       - name: "Update next version number"
         run: |

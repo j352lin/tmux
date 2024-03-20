@@ -1,4 +1,4 @@
-# Welcome to tmux!
+# Welcome to tmux!!
 
 tmux is a terminal multiplexer: it enables a number of terminals to be created,
 accessed, and controlled from a single screen. tmux may be detached from a
@@ -29,10 +29,10 @@ out of date. Examples are listed on
 
 To build and install tmux from a release tarball, use:
 
-~~~bash
+```bash
 ./configure && make
 sudo make install
-~~~
+```
 
 tmux can use the utempter library to update utmp(5), if it is installed - run
 configure with `--enable-utempter` to enable this.
@@ -45,12 +45,12 @@ For more detailed instructions on building and installing tmux, see
 To get and build the latest from version control - note that this requires
 `autoconf`, `automake` and `pkg-config`:
 
-~~~bash
+```bash
 git clone https://github.com/tmux/tmux.git
 cd tmux
 sh autogen.sh
 ./configure && make
-~~~
+```
 
 ## Contributing
 
@@ -71,9 +71,9 @@ further information.
 For documentation on using tmux, see the tmux.1 manpage. View it from the
 source tree with:
 
-~~~bash
+```bash
 nroff -mdoc tmux.1|less
-~~~
+```
 
 A small example configuration is in `example_tmux.conf`.
 

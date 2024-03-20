@@ -83,7 +83,7 @@ jobs:
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           prerelease: false
-          title: "${{ env.NEW_TAG }}"
+          automatic_release_tag: "${{ env.NEW_TAG }}"
           files: |
             *.tar.gz
         id: "automatic_releases"

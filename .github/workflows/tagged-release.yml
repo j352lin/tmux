@@ -24,9 +24,6 @@ jobs:
           echo "Current version: $VERSION"
           git config user.name github-actions
           git config user.email github-actions@github.com
-          git add configure.ac
-          git commit -m "Change version to $NEW_VERSION in configure.ac"
-          git push origin HEAD
           git tag -a "v$VERSION" -m "Release v$VERSION"
           git push origin "v$VERSION"
           echo "VERSION=$VERSION" >> $GITHUB_ENV
@@ -51,7 +48,7 @@ jobs:
           rm /tmp/tmux-tagged-release
           rm /tmp/tmp_file
           git add CHANGES
-          git commit -m "change CHANGES for new release"
+          git commit -m "Add to CHANGES for new release"
           git push
 
       - name: "Checkout source code"

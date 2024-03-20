@@ -27,10 +27,11 @@ jobs:
             build-essential
           sh .github/travis/before-install.sh
           sh .github/travis/build.sh
-          make dist
 
       - name: "Remove next- prefix from version in configure.ac"
-        run: sed -i '/AC_INIT(\[tmux\], /s/next-//' configure.ac
+        run: |
+          sed -i '/AC_INIT(\[tmux\], /s/next-//' configure.ac
+          make dist
 
       - name: Setup
         run: |

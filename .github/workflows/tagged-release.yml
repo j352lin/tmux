@@ -28,6 +28,16 @@ jobs:
           sh .github/travis/before-install.sh
           sh .github/travis/build.sh
 
+      - name: Run tests
+        if: ${{ !contains(github.event.head_commit.message, '[SKIP-RELEASE-TESTS]') }}
+        run: |
+          chmod +x *.sh
+          for test_script in *.sh; do
+            chmod +x $test_script
+            echo Running test $test_script
+            ./$test_script
+          done
+
       - name: "Remove next- prefix from version in configure.ac"
         run: |
           sed -i '/AC_INIT(\[tmux\], /s/next-//' configure.ac

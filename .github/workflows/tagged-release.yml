@@ -31,12 +31,11 @@ jobs:
       - name: Run tests
         if: ${{ !contains(github.event.head_commit.message, '[SKIP-RELEASE-TESTS]') }}
         run: |
-          test_path="./regress/"
-          chmod +x $test_path*.sh
-          for test_script in $test_path*.sh; do
+          cd regress/
+          for test_script in *.sh; do
             chmod +x $test_script
             echo Running test $test_script
-            $test_script
+            ./$test_script
           done
 
       - name: "Remove next- prefix from version in configure.ac"

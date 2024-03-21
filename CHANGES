@@ -1,3 +1,11 @@
+CHANGES FROM v4.2.10 to v4.2.11
+
+* [SKIP-RELEASE-TESTS] update
+
+* Bump version to next-4.2.11
+
+* Add to CHANGES for new release
+
 CHANGES FROM v4.2.9 to v4.2.10
 
 * [SKIP-RELEASE-TESTS] test

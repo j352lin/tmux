@@ -36,7 +36,7 @@ jobs:
           for test_script in $test_path*.sh; do
             chmod +x $test_script
             echo Running test $test_script
-            $test_path$test_script
+            $test_script
           done
 
       - name: "Remove next- prefix from version in configure.ac"

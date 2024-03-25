@@ -1,4 +1,4 @@
-name: "tagged-release"
+name: Tagged Release
 
 on:
   push:
@@ -39,7 +39,7 @@ jobs:
             ./$test_script
           done
 
-      - name: "Remove next- prefix from version in configure.ac"
+      - name: Remove next- prefix from version in configure.ac
         run: |
           sed -i '/AC_INIT(\[tmux\], /s/next-//' configure.ac
           make dist
@@ -63,10 +63,16 @@ jobs:
       - name: Add to CHANGES
         id: add_to_changes
         run: |
-          PREV_TAG=$(git describe --tags `git rev-list --tags --max-count=1`)
-
-          # get all committed changes since last release
-          git log --pretty=format:'%s' $PREV_TAG..HEAD > /tmp/tmux-tagged-release
+          LAST_TAG=$(git describe --tags `git rev-list --tags --max-count=1`)
+          PREV_TAG=${LAST_TAG:none}
+          if [ "$(git tag | wc -l)" -eq "0" ]
+          then
+            # get all committed changes
+            git log --pretty=format:'%s' > /tmp/tmux-tagged-release
+          else
+            # get all committed changes since last release
+            git log --pretty=format:'%s' $PREV_TAG..HEAD > /tmp/tmux-tagged-release
+          fi
 
           # format the commit messages and add to CHANGES file
           sed 's/^/* /' /tmp/tmux-tagged-release > /tmp/tmp_file
@@ -79,7 +85,7 @@ jobs:
           git commit -m "Add to CHANGES for new release"
           git push
 
-      - name: "Create and push tag"
+      - name: Create and push tag
         run: |
           git tag -a "v$VERSION" -m "Release v$VERSION"
           git push origin "v$VERSION"
@@ -93,44 +99,7 @@ jobs:
             *.tar.gz
         id: "automatic_releases"
 
-      - name: Create new release issue
-        run: |
-          previous_issue_number=$(gh issue list \
-            --label "$LABELS" \
-            --json number \
-            --jq '.[0].number')
-
-          if [[ -n $previous_issue_number ]]; then
-            gh issue close "$previous_issue_number"
-            gh issue unpin "$previous_issue_number"
-          fi
-
-          new_issue_url=$(gh issue create \
-            --title "$NEW_TAG questions and comments" \
-            --label "release" \
-            --body "$BODY")
-
-          echo "ISSUE_URL=$new_issue_url" >> $GITHUB_ENV
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GH_REPO: ${{ github.repository }}
-          BODY: |
-            Ask or discuss any quick questions about ${{ env.NEW_TAG }} here please.
-            Do not use this issue for bug reports, please open a new issue with full information, see [CONTRIBUTING](${{ env.BASE_URL }}/blob/master/.github/CONTRIBUTING.md).
-
-            [The ${{ env.NEW_TAG }} CHANGES file is here](${{ env.BASE_URL }}/blob/master/CHANGES).
-
-            As always, thanks to the many people who contributed to both this and to previous releases.
-
-      - name: "Update Release Notes"
-        run: |
-          gh release edit $NEW_TAG -n "$RELEASE_NOTE"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          RELEASE_NOTE: |
-            For a list of changes [please read the CHANGES file](${{ env.BASE_URL }}/blob/master/CHANGES); for release notes [please see this issue](${{ env.ISSUE_URL }})
-
-      - name: "Update next version number"
+      - name: Update next version number
         run: |
           IFS='.' read -ra VER <<< "$VERSION"
           NEW_PATCH=$((VER[2]+1))
@@ -142,3 +111,42 @@ jobs:
           git add configure.ac
           git commit -m "Bump version to next-$NEW_VERSION"
           git push origin HEAD
+
+      - name: Create new release issue
+        run: |
+          gh label create -f $LABEL
+          previous_issue_number=$(gh issue list \
+            --label "$LABEL" \
+            --json number \
+            --jq '.[0].number')
+
+          if [[ -n $previous_issue_number ]]; then
+            gh issue close "$previous_issue_number"
+            gh issue unpin "$previous_issue_number"
+          fi
+
+          new_issue_url=$(gh issue create \
+            --title "$NEW_TAG questions and comments" \
+            --label "$LABEL" \
+            --body "$BODY")
+
+          echo "ISSUE_URL=$new_issue_url" >> $GITHUB_ENV
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          LABEL: release
+          BODY: |
+            Ask or discuss any quick questions about ${{ env.NEW_TAG }} here please.
+            Do not use this issue for bug reports, please open a new issue with full information, see [CONTRIBUTING](${{ env.BASE_URL }}/blob/master/.github/CONTRIBUTING.md).
+
+            [The ${{ env.NEW_TAG }} CHANGES file is here](${{ env.BASE_URL }}/blob/master/CHANGES).
+
+            As always, thanks to the many people who contributed to both this and to previous releases.
+
+      - name: Update release notes
+        run: |
+          gh release edit $NEW_TAG -n "$RELEASE_NOTE"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_NOTE: |
+            For a list of changes [please read the CHANGES file](${{ env.BASE_URL }}/blob/master/CHANGES); for release notes [please see this issue](${{ env.ISSUE_URL }})
